@@ -1,3 +1,5 @@
+# SYSTEM of student management
+
 # Add students -> class
 def Num_stu(): # Number of students
     try:
