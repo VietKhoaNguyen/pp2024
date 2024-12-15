@@ -3,14 +3,16 @@ class Person:
         self.__name = name
         self.__dob = dob
 
-    # Encapsulation: getter methods for private attributes
+    # Encapsulation: 
+    # Getter methods for private attributes
     def get_name(self):
         return self.__name
 
     def get_dob(self):
         return self.__dob
 
-    # Polymorphism: Define a common input method
+    # Polymorphism: 
+    # Define a common input method
     def input(self):
         self.__name = input("Enter name: ")
         self.__dob = input("Enter Date of Birth (DD/MM/YYYY): ")
@@ -25,7 +27,8 @@ class Student(Person):
         self.__student_id = student_id
         self.__marks = marks if marks is not None else {}
 
-    # Encapsulation: getter methods for private attributes
+    # Encapsulation: 
+    # Getter methods for private attributes
     def get_student_id(self):
         return self.__student_id
 
@@ -35,7 +38,8 @@ class Student(Person):
     def set_marks(self, course_id, mark):
         self.__marks[course_id] = mark
 
-    # Polymorphism: Input for student-specific attributes
+    # Polymorphism: 
+    # Input for student-specific attributes
     def input(self):
         super().input()  # Call the input method from Person
         self.__student_id = input("Enter student ID: ")
@@ -51,14 +55,16 @@ class Course:
         self.__course_id = course_id
         self.__course_name = course_name
 
-    # Encapsulation: getter methods for private attributes
+    # Encapsulation:
+    # Getter methods for private attributes
     def get_course_id(self):
         return self.__course_id
 
     def get_course_name(self):
         return self.__course_name
 
-    # Polymorphism: Input for course-specific attributes
+    # Polymorphism: 
+    # Input for course-specific attributes
     def input(self):
         self.__course_id = input("Enter course ID: ")
         self.__course_name = input("Enter course name: ")
@@ -73,7 +79,8 @@ class School:
         self.__students = []
         self.__courses = []
 
-    # Encapsulation: Getter methods for private attributes
+    # Encapsulation: 
+    # Getter methods for private attributes
     def get_students(self):
         return self.__students
 
@@ -87,7 +94,8 @@ class School:
     def add_course(self, course: Course):
         self.__courses.append(course)
 
-    # Polymorphism: method to input student or course data
+    # Polymorphism:
+    # Common input method to input student or course data
     def input(self, entity_type):
         if entity_type == 'student':
             student = Student("", "", "", {})
