@@ -1,3 +1,6 @@
+import pickle
+import gzip
+
 class Person:
     def __init__(self, name, dob):
         self.__name = name
@@ -70,8 +73,8 @@ class Student(Person):
 
 class School:
     def __init__(self, stdscr):
-        self.__students = []
-        self.__courses = []
+        self.__students = self.load_data("students.pkl.gz") or []
+        self.__courses = self.load_data("courses.pkl.gz") or []
         self.stdscr = stdscr
 
     def get_students(self):
@@ -82,9 +85,11 @@ class School:
 
     def add_student(self, student):
         self.__students.append(student)
+        self.save_data("students.pkl.gz", self.__students)
 
     def add_course(self, course):
         self.__courses.append(course)
+        self.save_data("courses.pkl.gz", self.__courses)
 
     def enter_marks(self):
         for course in self.__courses:
@@ -96,6 +101,20 @@ class School:
                 except ValueError:
                     print("Invalid mark entered. Skipping.")
                     continue
+        self.save_data("marks.pkl.gz", self.__students)
 
     def sort_students_by_gpa(self):
         self.__students.sort(key=lambda student: student.calculate_gpa(self.__courses), reverse=True)
+
+    @staticmethod
+    def save_data(file_name, data):
+        with gzip.open(file_name, "wb") as f:
+            pickle.dump(data, f)
+
+    @staticmethod
+    def load_data(file_name):
+        try:
+            with gzip.open(file_name, "rb") as f:
+                return pickle.load(f)
+        except (FileNotFoundError, EOFError):
+            return None

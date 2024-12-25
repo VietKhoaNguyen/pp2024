@@ -6,27 +6,27 @@ from output import display_menu
 def main(stdscr):
     school = School(stdscr)
 
-    pre_entered_students = [
-        input_student(),
-        input_student(),
-        input_student(),
-    ]
-    pre_entered_courses = [
-        input_course(),
-        input_course(),
-        input_course(),
-    ]
-
-    for student in pre_entered_students:
-        school.add_student(student)
-
-    for course in pre_entered_courses:
-        school.add_course(course)
-
     while True:
         display_menu(stdscr)
         c = stdscr.getch()
-        if c == ord('q'):
+
+        if c == ord('1'):
+            student = input_student()
+            school.add_student(student)
+        elif c == ord('2'):
+            course = input_course()
+            school.add_course(course)
+        elif c == ord('3'):
+            school.enter_marks()
+        elif c == ord('4'):
+            # Implement display marks logic if needed
+            pass
+        elif c == ord('5'):
+            # Implement average GPA display if needed
+            pass
+        elif c == ord('6'):
+            school.sort_students_by_gpa()
+        elif c == ord('q'):
             break
 
 if __name__ == "__main__":
