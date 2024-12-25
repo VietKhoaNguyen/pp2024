@@ -1,57 +1,74 @@
 import os
 import subprocess
 
-def shell():
-    print("Simple Shell. Type 'exit' to quit.")
+def ex_command(command):
+    try:
+        # Split command -> parts
+        parts = command.split('|')
+        processes = []
 
+        for i, part in enumerate(parts):
+            part = part.strip()
+
+            # Handle input redirection
+            if '<' in part:
+                cmd, input_file = map(str.strip, part.split('<'))
+                input_file = open(input_file, 'r')
+            else:
+                cmd = part
+                input_file = None
+
+            # Handle output redirection
+            if '>' in cmd:
+                cmd, output_file = map(str.strip, cmd.split('>'))
+                output_file = open(output_file, 'w')
+            else:
+                output_file = None
+
+            # Parse the command
+            cmd_parts = cmd.split()
+
+            if i == 0:
+                # First command, potentially with input redirection
+                proc = subprocess.Popen(cmd_parts, stdin=input_file, stdout=subprocess.PIPE)
+            else:
+                # Subsequent commands in the pipeline
+                proc = subprocess.Popen(cmd_parts, stdin=processes[-1].stdout, stdout=subprocess.PIPE)
+
+            if input_file:
+                input_file.close()
+
+            processes.append(proc)
+
+        # Handle output of the final command
+        final_output = processes[-1].stdout
+
+        if output_file:
+            # Write output -> file
+            with open(output_file.name, 'w') as f:
+                f.write(final_output.read().decode('utf-8'))
+            output_file.close()
+        else:
+            # Print output -> console
+            print(final_output.read().decode('utf-8'))
+
+        # Wait for all processes to complete
+        for proc in processes:
+            proc.wait()
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+def main():
     while True:
         try:
-            # Prompt for user input
-            command = input("$ ").strip()
-            if command.lower() == "exit":
+            command = input("shell> ").strip()
+            if command.lower() in {"exit", "quit"}:
                 break
-
-            # Handle piping (|) and IO redirection (> and <)
-            if '|' in command:
-                commands = command.split('|')
-                prev_output = None
-
-                for cmd in commands:
-                    cmd = cmd.strip().split()
-                    if prev_output:
-                        process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                        prev_output, _ = process.communicate(input=prev_output)
-                    else:
-                        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                        prev_output, _ = process.communicate()
-
-                print(prev_output, end="")
-
-            elif '>' in command:
-                parts = command.split('>')
-                cmd = parts[0].strip().split()
-                output_file = parts[1].strip()
-
-                with open(output_file, 'w') as file:
-                    subprocess.run(cmd, stdout=file)
-
-            elif '<' in command:
-                parts = command.split('<')
-                cmd = parts[0].strip().split()
-                input_file = parts[1].strip()
-
-                with open(input_file, 'r') as file:
-                    subprocess.run(cmd, stdin=file)
-
-            else:
-                # Simple command execution
-                process = subprocess.run(command.split(), capture_output=True, text=True)
-                print(process.stdout, end="")
-                if process.stderr:
-                    print(process.stderr, end="")
-
-        except Exception as e:
-            print(f"Error: {e}")
+            ex_command(command)
+        except KeyboardInterrupt:
+            print("\nExit shell.")
+            break
 
 if __name__ == "__main__":
-    shell()
+    main()
