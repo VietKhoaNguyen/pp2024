@@ -1,5 +1,6 @@
 import pickle
 import gzip
+import threading
 
 class Person:
     def __init__(self, name, dob):
@@ -76,6 +77,7 @@ class School:
         self.__students = self.load_data("students.pkl.gz") or []
         self.__courses = self.load_data("courses.pkl.gz") or []
         self.stdscr = stdscr
+        self.lock = threading.Lock()
 
     def get_students(self):
         return self.__students
@@ -106,10 +108,12 @@ class School:
     def sort_students_by_gpa(self):
         self.__students.sort(key=lambda student: student.calculate_gpa(self.__courses), reverse=True)
 
-    @staticmethod
-    def save_data(file_name, data):
-        with gzip.open(file_name, "wb") as f:
-            pickle.dump(data, f)
+    def save_data(self, file_name, data):
+        def save():
+            with self.lock:
+                with gzip.open(file_name, "wb") as f:
+                    pickle.dump(data, f)
+        threading.Thread(target=save, daemon=True).start()
 
     @staticmethod
     def load_data(file_name):
