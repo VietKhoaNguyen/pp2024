@@ -1,0 +1,11 @@
+Name: Anh
+Marks:
+ICT1.001: 10.3, ICT2.004: 3.2
+
+Name: Huy
+Marks:
+ICT1.001: 5.0
+
+Name: Si 
+Marks:
+ICT3.002: -2.0, ICT1.001: 1.0
