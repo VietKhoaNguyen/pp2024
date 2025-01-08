@@ -1,0 +1,3 @@
+StudentID: BI14001, Name: Anh, Dob: 15/07/2005
+StudentID: BI14002, Name: Huy, Dob: 22/10/2005
+StudentID: BI14003, Name: Si, Dob: 02/09/2005
